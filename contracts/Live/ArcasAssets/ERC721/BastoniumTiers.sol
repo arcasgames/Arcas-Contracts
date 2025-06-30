@@ -8,11 +8,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract NFTTierDistributor is VRFV2PlusWrapperConsumerBase, Ownable {
     // Chainlink VRF Configuration for Soneium Mainnet
     uint32 private constant CALLBACK_GAS_LIMIT = 100000;
-    uint16 private constant REQUEST_CONFIRMATIONS = 3;
+    uint16 private constant REQUEST_CONFIRMATIONS = 0; // Soneium specific
     uint32 private constant NUM_WORDS = 1;
     
-    // Soneium Mainnet VRF Wrapper Address
-    address private constant VRF_WRAPPER = 0xb89BB0aB64b219Ba7702f862020d879786a2BC49;
+    // Soneium Mainnet VRF Configuration
+    address private constant VRF_WRAPPER = 0x656155C8bD09d1741385C525010590522758345c;
+    address private constant VRF_COORDINATOR = 0xb89BB0aB64b219Ba7702f862020d879786a2BC49;
+    bytes32 private constant KEY_HASH = 0x508b86c17b9abbdef2b903bd4f1b03ae321d7c1431b9ccac97d5927b4619e050; // 2 gwei key hash
     
     // Bastonium NFT Collection Address on Soneium Mainnet
     address public constant NFT_COLLECTION = 0x7683133AaB29287b04d8A30caccC9E3Fb5f7A68f;
@@ -42,14 +44,14 @@ contract NFTTierDistributor is VRFV2PlusWrapperConsumerBase, Ownable {
      */
     constructor() VRFV2PlusWrapperConsumerBase(VRF_WRAPPER) Ownable(msg.sender) {}
 
-    /// @notice Step 1: Request a random number from Chainlink VRF using direct funding with native ETH.
-    function requestRandomNumber() external onlyOwner {
+    /// @notice Step 1: Request a random number from Chainlink VRF using direct funding with native ETH
+    function requestRandomNumber() external onlyOwner returns (uint256) {
         require(lastRandomNumber == 0, "Random number already requested");
         
-        // Create extra args for native payment
-        bytes memory extraArgs = abi.encode(VRFV2PlusClient.ExtraArgsV1({nativePayment: true}));
+        bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
+            VRFV2PlusClient.ExtraArgsV1({nativePayment: true})
+        );
         
-        // Request randomness with native payment enabled
         (uint256 requestId, uint256 price) = requestRandomnessPayInNative(
             CALLBACK_GAS_LIMIT,
             REQUEST_CONFIRMATIONS,
@@ -59,6 +61,7 @@ contract NFTTierDistributor is VRFV2PlusWrapperConsumerBase, Ownable {
         
         emit RandomNumberRequested(requestId);
         emit RequestPrice(price);
+        return requestId;
     }
 
     /// @notice Step 2: Chainlink VRF callback – store the random number.

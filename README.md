@@ -1,80 +1,90 @@
-This is the Smart Contract repository for Arcas and the Skillstaking protocol.
+Arcas Assets Overview
 
-The Arcas token is the v2 of the old Block Ape Scissors token which was deprecated and migrated on the 30/09/2023 with full information available here:
+1. 100mil ARCAS tokens on BNB, ETH & SONEIUM
 
-https://info.blockapescissors.com/arcas/web3-ecosystem/arcas-token/old-token-migration
+BNB: 0x7ca058309053F90b39Bfc58dE1edA2a89e9c03a8
+ETH: 0x570f09AC53b96929e3868f71864E36Ff6b1B67D7
+SON: 0x570f09AC53b96929e3868f71864E36Ff6b1B67D7
 
-The ARCAS ecosystem is now accessible on https://arcas.blockapescissors.gg
+2. 10k GAMESTER NFTS on BNB
 
-ARCAS token CA is: 0xAd0926eCf31719263DC86426024794332d9dD9A3
+BNB: 0x4bd2a30435e6624CcDee4C60229250A84a2E4cD6
 
-All liquidity has been migrated and is now secured under a 5/6 multisig held by various team members under:
+3. 1500 BASTONIUM NFTs on SONEIUM
 
-bnb:0x24976a29d3c710EA24F1Eb760c0B677be0AB21df
+SON: 0x7683133aab29287b04d8a30caccc9e3fb5f7a68f
 
-Smart contracts here:
+4. 90 BASTRONAUT NFTs on BNB
 
-1. ARCAS token deployed here:
-https://bscscan.com/address/0xAd0926eCf31719263DC86426024794332d9dD9A3#code
+BNB:0x29013Cc12d6051246507FA1e46A510A1C0bc076D
 
-2. Arcas Team Vesting Manager deployed here:
-https://bscscan.com/address/0x0D3D916c5b18D7D8cB5176BeBB7511198253b307#code
+5. 51 PRIME PROGRAM NFTs on SONEIUM
 
-The Vesting manager has been preset with a vesting timeline:
+SON: 0x5E407c82D7eFa132fE84D2207F6109F89a1c500F
 
-Start Block: 34096534 (Expected 1st Dec 2023)
+Arcas Badges Overview
 
-End Block: 44608534 (Expected 1st Dec 2024)
+1. 125,738 Welcome to the Jungle SBTs
 
-We have deployed Skillstaking contracts to opbnb testnet for demo purposes.
+SON: 0x52d44Bea684eCd8Cad6d02205e40FC3bD59Ad877
 
-The Plan:
+2. 7,763 BLACK MARKET TRADOOR SBTs
 
-Arcas is the community and DAO working on Arcas Champions, an unreal engine 5 competitive ape shooter.
+SON: 0x9a4cC369A91AE5e8cBd99163a2eAC5b7957879dB
 
-The game implements the Skillstaking protocol, putting the best gamers in control and giving them revenue share through the tokenisation of their Matchmaking-Rank.
+3. TBD BATTLE HARDENED APE SBTs
 
-Note: Rank is a Gaming RWA combining Time and Skill, this is the most important data point for the Esports community.
+SON: TBD
 
-The Arcas ecosystem and Skillstaking protocol will require a decentralised oracle network that validates Rank from the
-game backend and that writes it on chain under the RankOracle.
+Partner Assets
 
-In order to contend with cheating, we need to create an epoch based system that allows the DON to validate the data with AI trained by esports gamers.
+1. ASTAR on Soneium:
 
-The system can operate slowly and initially we use weekly on chain writes.
+SON: 0x2CAE934a1e84F693fbb78CA5ED3B0A6893259441
 
-Over time we need to increase the efficiency, security and speed of this AI network.
+2. 307 Soneium Premium OG Badge ERC1155 TokenID 1:
 
-The goal is to decentralise the validators of the system to large esports organisations
-with their own AI bots in house.
+SON: 0x2A21B17E366836e5FFB19bd47edB03b4b551C89d
 
-Roadmap:
+3. 24,506 ACS OG Badge ErC1155 Token ID 3:
 
-Q1 2024
-
-Arcas Champions Beta on Gaimin.io Launcher
-Arcas bridges to Avax
-Skillstaking on AvaCloud Testnet
-
-Q2 2024
-
-Arcas Champions Closed Early Access w Esports Streams
-Arcas Subnet on AvaCloud
-Skillstaking & AI Anti-cheat DON Testing & Audits
-
-Q3 2024
-
-Arcas Champions Early Access 
-Skillstaking & AI Anti-cheat DON on Subnet
-Arcas DAO treasury & voting on Subnet
-
-Q4 2024
-
-Arcas Champions Full Release
-
-2025
-
-Continued work on Arcas Champions through 
-community driven game development.
+SON: 0x2A21B17E366836e5FFB19bd47edB03b4b551C89d
 
 
+
+
+Soneium Contract System Design:
+
+General Contracts:
+
+1. SmartAccountAuthority.sol
+Allows EOAs to connect a smart account which transacts on their behalf with ecosystem contracts.
+It's called on initialisation whenever a smart account is created.
+
+Arcas Hub:
+
+1. Staking Module
+This allows for Arcas & Partner assets to be staked
+
+2. Arcas Badge ERC1155
+This contract emits 3 tiers of badges which provide benefits across the Arcas ecosystem on Soneium.
+
+3. Arcas Bridge
+This CCIP contract handles the bridging of Arcas acros chains
+
+4. Arcas Bridge Treasury
+This handles the Arcas tokens stored in the bridge treasury
+
+//Likely plan to relaunch the token using the Chainlink CCIP Token Manager, removing the need for the bridge.
+
+
+Skillstaking:
+
+1. PlayerManager.sol 
+This stores player rank which is written directly from Arcas Champions.
+
+2. Skillstaking.sol
+Handles staking, unstaking and positions for users.
+
+3. Treasury.sol
+Uses Chainlink functions to calculate and award yield for users. Reads the Arcas Badge ERC1155 to award additional yield for stakers if they are eligible.
